@@ -54,13 +54,43 @@ To run this script successfully, ensure your environment meets the following req
 ```bash
 sudo apt install libusb-1.0 libfftw3-bin default-jdk
 ```
+* **USB Permissions:** Configure `udev` rules for HackRF to allow the `libusb` library to open the HackRF USB device, as it will not work by default without these permissions. Follow the [HackRF USB permissions setup](https://github.com/mossmann/hackrf/wiki/FAQ) if you need help.
 
 ### Hardware & Physical Connections
 * **SDR Setup:** Connect the HackRF One devices to your Linux machine using Micro-USB cables.
-* **Cable Connection:** Connect an SMA cable directly between the two HackRF devices.
+* **I/O ports:** Connect an SMA cable directly between the two HackRF devices.
 * **Device Identification:** Check the device serial numbers and map them to the correct roles in the code under the `args` parameter (to distinguish between sensing and jamming devices).
 ```python
   osmosdr_source = osmosdr.source(
       args="numchan=" + str(1) + " " + ""
   )
 ```
+### Global Configuration Parameters (Optional)
+Adjust these variables directly within the script if you wish to modify your testing parameters:
+
+* `BAND` - Select Frequency operating range (1=2.4GHz, 2=5GHz)
+* `WAVEFORM` - Select Jamming waveform (1=single tone, 2=swept sine, 3=gaussian noise)
+* `POWER` - Enter Jammer transmit power in dBm (Min = -40dBm, Max = 13dBm)
+* `T_JAMMING` - Enter channel jamming duration in seconds
+* `DURATION` - Enter total program execution duration in seconds
+* `T_SENSING` - Enter channel sensing duration in seconds
+* `THRESHOLD` - Power threshold for activity detection
+
+### Startup Procedure
+1. **Visualization:** Clone and set up the companion [HackRF Spectrum Analyzer](#Technologies) repository. To run, simply execute:
+   
+```bash
+   ./build/hackrf_sweep_spectrum_analyzer_linux.sh
+```
+2. **Execution:** Run the core Python script to initiate the automated scanning and reactive jamming loop:
+   
+```bash
+python3 jamRF.py
+```
+
+## 📊 Visual Analysis of Spectrum Activity and Jamming
+
+Using tools like the HackRF Spectrum Analyzer graphical interface, we can visualize spectrum usage and the real-time impact of reactive jamming:
+
+* **Channel Analysis / Normal Activity:** During the sensing phase, the spectrum analyzer displays background noise and occasional communication peaks. The tool's GUI highlights active communication areas in warmer colors (such as red/orange zones in the waterfall display) while idle or quiet spectrum ranges are represented in cooler tones (blue).
+* **Active Jamming Execution:** Once the `detect()` function registers power values exceeding the set `THRESHOLD`, the script targets that specific frequency channel and executes `jam()`. On the spectrum analyzer waterfall view, this appears as a sudden, intense broadband or noise burst spanning across the jammed channel, disrupting any legitimate data transmission occurring there.
