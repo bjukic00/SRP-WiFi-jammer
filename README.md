@@ -93,4 +93,24 @@ python3 jamRF.py
 Using tools like the HackRF Spectrum Analyzer graphical interface, we can visualize spectrum usage and the real-time impact of reactive jamming:
 
 * **Channel Analysis / Normal Activity:** During the sensing phase, the spectrum analyzer displays background noise and occasional communication peaks. The tool's GUI highlights active communication areas in warmer colors (such as red/orange zones in the waterfall display) while idle or quiet spectrum ranges are represented in cooler tones (blue).
+
+<div align="center">
+  <img src="./assets/Screenshot_2.png" alt="Normal Activity" width="700">
+</div>
+<br>
+
+
 * **Active Jamming Execution:** Once the `detect()` function registers power values exceeding the set `THRESHOLD`, the script targets that specific frequency channel and executes `jam()`. On the spectrum analyzer waterfall view, this appears as a sudden, intense broadband or noise burst spanning across the jammed channel, disrupting any legitimate data transmission occurring there.
+
+<div align="center">
+  <img src="./assets/Screenshot_1.png" alt="Normal Activity" width="700">
+</div>
+<br>
+
+## 🛡️ Mitigation and Defense Against Reactive Jamming
+
+Defending against reactive and transition-based jamming attacks requires resilient wireless network architectures:
+
+* **Frequency Hopping Spread Spectrum (FHSS):** Devices constantly and rapidly switch the channels they communicate on. Because a reactive jammer must first sense where transmission is happening before it can interfere, the device has already jumped to a brand new frequency by the time the jammer reacts, leaving it wasting energy on empty channels.
+* **Error-Correcting Codes (DSSS and Coding):** Special mathematical protection codes are added to the data. If the jammer manages to disrupt only a portion of the transmission, the receiver can still successfully reconstruct and read the entire message using these codes.
+* **Detection and Monitoring Systems:** The network continuously monitors signal quality and sudden drops in data delivery. When weird anomalies are detected, the system immediately recognizes a jamming attack and can switch to backup defense protocols.
